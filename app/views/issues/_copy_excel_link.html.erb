@@ -1,0 +1,28 @@
+<%= javascript_tag do %>
+  $(document).ready(function() {
+    $('#content > .contextual').each(function () {
+      var edit = $(this).find('.icon-edit');
+      if (edit.length > 0) {
+        if ($('#update .edit_issue .box > fieldset.tabular').length > 0)
+        {
+          // Adjust the position of the edit area to match the sorting of the comments
+          var reverseOrder = <%= User.current.wants_comments_in_reverse_order? %>;
+          if (reverseOrder) $('#update').prependTo($('history'));
+          
+          // Create Excel Link button
+          $('<a>', {
+            'class': 'icon icon-link',
+            text: '<%= escape_javascript(l(:button_reply)) %>',
+            href: '<%= edit_issue_path(@issue) %>',
+            click: function()
+            {
+              let link = 'HYPERLINK(\"' + location.href + '", "' + document.getElementsByTagName("h2")[0].textContent + ': ' + document.getElementsByClassName("subject")[0].getElementsByTagName("h3")[0].textContent + '")';
+              Clipboard.writeText(link);
+              return false;
+            }
+          }).prependTo($(this));
+        }
+      }
+    });
+  });
+<% end %>
